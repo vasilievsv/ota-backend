@@ -70,10 +70,10 @@ find_library( MY_STATIC_RESTBED ${PROJECT_NAME}
 
 find_library( MY_STATIC_CJSON ${PROJECT_NAME} 
                 PATHS 
-                    ${CMAKE_SOURCE_DIR}/libs/cjson/build
+                   ./libs/cJSON/build
                 NAMES cjson )
 
-
+message( "CMAKE_SOURCE_DIR"          ${CMAKE_SOURCE_DIR})
 message( "FOUND_RABBITMQ_STATIC_LIB" ${MY_STATIC_RABBITMQ})
 message( "FOUND_RESTBED_STATIC_LIB"  ${MY_STATIC_RESTBED})
 message( "FOUND_JSON_STATIC_LIB"     ${MY_STATIC_CJSON})
