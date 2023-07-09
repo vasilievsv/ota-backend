@@ -108,7 +108,7 @@ target_link_libraries(_this_ota_backend_utils
 target_include_directories( _this_ota_backend_utils
                             SYSTEM PRIVATE 
                                 /usr/include 
-                                "/usr/include/cpprest"
+                            #    "/usr/include/cpprest"
                             PUBLIC 
                                 "src"
                                 "src/backend"
@@ -150,7 +150,7 @@ message(STATUS "СПИСОК ФАЙЛОВ ДЛЯ СБОРКИ \n ${FILE_SRC}")
 add_library             ( _this_project_common STATIC ${FILE_SRC})
 target_link_libraries   ( _this_project_common 
                             LINK_PRIVATE 
-                                 ${MY_STATIC_RESTBED} _this_ota_backend_utils cpprest cjson)
+                                 ${MY_STATIC_RESTBED} _this_ota_backend_utils cjson)
 
 #
 # Настройка инклудов для сборки _this_project_common
