@@ -103,6 +103,9 @@ jobs:
         sudo dpkg -l | grep ssl
 
         chmod +x ./configure 
+        # try fix wrong include
+        rm -r ./libs/restbed/dependency/openssl/include/openssl
+
         # !!! Github: Administrative privileges
         sudo ./configure 0.0.1 OFF 2
       env:
