@@ -6,7 +6,7 @@
 # │                               Генерация DEB                                          │
 # └──────────────────────────────────────────────────────────────────────────────────────┘
 #
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.21)
 
 # https://decovar.dev/blog/2021/09/23/cmake-cpack-package-deb-apt/
 # https://www.mankier.com/7/cpack-generators
@@ -44,7 +44,8 @@ install(FILES  ${_SYSTEMD_SERVICE_OUT} DESTINATION /usr/local/share/ )
 set(CPACK_PACKAGE_NAME                  ${PROJECT_NAME}                   CACHE STRING "The package name")
 set(CPACK_PACKAGE_VENDOR                "Public")
 set(CPACK_PACKAGE_CONTACT               "YOUR@E-MAIL.net")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   ${${PROJECT_NAME}_DESCRIPTION}    CACHE STRING "Package description")
+#set(CPACK_PACKAGE_DESCRIPTION_SUMMARY   ${${PROJECT_NAME}_DESCRIPTION}    CACHE STRING "Package description")
+#set(CPACK_DEBIAN_PACKAGE_DESCRIPTION    "test"   CACHE STRING "Package description")
 set(CPACK_PACKAGE_INSTALL_DIRECTORY     ${CPACK_PACKAGE_NAME})
 
 set(CPACK_VERBATIM_VARIABLES            YES)
