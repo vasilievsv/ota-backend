@@ -45,7 +45,7 @@ set(BUILD_SHARED_AND_STATIC_LIBS,ON)
 
 add_subdirectory(libs/rabbitmq-c )
 add_subdirectory(libs/restbed )
-add_subdirectory(libs/cjson )
+add_subdirectory(libs/cJSON )
 
 #
 # !!! принудительно указываем include path
