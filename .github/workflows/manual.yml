@@ -99,6 +99,9 @@ jobs:
         
     - name: job-configure
       run: |
+        # check ssl
+        sudo dpkg -l | grep ssl
+
         chmod +x ./configure 
         # !!! Github: Administrative privileges
         sudo ./configure 0.0.1 OFF 2
@@ -126,6 +129,6 @@ jobs:
     - name: job-upload-artifacts
       uses: actions/upload-artifact@v3
       with:
-        name: setup_platformio_core
+        name: ota-backend
         path: ${{github.workspace}}/bin/*.deb
         
