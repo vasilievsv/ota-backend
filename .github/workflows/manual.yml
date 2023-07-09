@@ -109,7 +109,7 @@ jobs:
 
     - name: job-build
       run: |
-        make build
+        sudo make build
       env:
         MY_VAR_1: "one"
         MY_VAR_2: "two"
@@ -117,7 +117,7 @@ jobs:
 
     - name: job-build-deb
       run: |
-          make deb
+          sudo make deb
       env:
           MY_VAR_1: "one"
           MY_VAR_2: "two"
