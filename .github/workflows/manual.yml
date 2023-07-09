@@ -99,6 +99,7 @@ jobs:
         
     - name: job-configure
       run: |
+        chmod +x ./configure 
         ./configure 0.0.1 OFF 2
       env:
         MY_VAR_1: "one"
