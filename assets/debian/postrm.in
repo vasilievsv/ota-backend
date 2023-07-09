@@ -1,0 +1,32 @@
+#
+# Этот скрипт вызывает POST-REMOVE фазу
+#
+
+if [ "@VERBOSE_LOGGING@" = "TRUE" ]; then
+    set -o xtrace
+    echo "Running postun script for v@CMAKE_PROJECT_VERSION@"
+fi
+
+service_name=@_SYSTEMD_SERVICE_NAME@.service
+
+###############################################################################
+#
+# MAIN ACTION
+#
+###############################################################################
+
+if [ "$1" = "purge" ]; then
+    #
+    # Удаляем все
+    #
+    rm -fR /home/user/$DPKG_MAINTSCRIPT_PACKAGE || true
+fi
+
+if [ "$1" = "remove" ]; then
+    #
+    # Удаляем служебный файл только в лучае удаления пакета
+    #
+    if test -f "/etc/systemd/system/$service_name"; then
+        rm "/etc/systemd/system/$service_name" || true
+    fi
+fi

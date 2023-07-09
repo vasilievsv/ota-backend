@@ -1,0 +1,11 @@
+
+[submodule "libs/restbed"]
+	path = libs/restbed
+	url = https://github.com/Corvusoft/restbed.git
+	branch = master
+[submodule "libs/rabbitmq-c"]
+	path = libs/rabbitmq-c
+	url = https://github.com/alanxz/rabbitmq-c.git
+[submodule "libs/cJSON"]
+	path = libs/cJSON
+	url = https://github.com/DaveGamble/cJSON.git

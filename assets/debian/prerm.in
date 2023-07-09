@@ -1,0 +1,23 @@
+#
+# Этот скрипт вызывает PRE-REMOVE фазу
+#
+
+if [ "@VERBOSE_LOGGING@" = "TRUE" ]; then
+    echo "Running prerm script for v@CMAKE_PROJECT_VERSION@"
+    set -o xtrace
+fi
+
+###############################################################################
+#
+# MAIN ACTION
+#
+###############################################################################
+
+if type systemctl >/dev/null 2>/dev/null; then
+
+	if [ -z "$D" ]; then
+		systemctl stop @_SYSTEMD_SERVICE_NAME@ || true
+	fi
+
+	systemctl disable @_SYSTEMD_SERVICE_NAME@ || true
+fi

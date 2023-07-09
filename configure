@@ -1,0 +1,191 @@
+#! /usr/bin/env bash
+#
+# ┌──────────────────────────────────────────────────────────────────────────────────────┐
+# │                                                                                      │
+# │                                 configure                                            │
+# │                         * * * * * * * * * * * * *                                    │
+# │                                                                                      │
+# │ The 'configure' script makes it easy to discover and configure the build environment │
+# │                 software and provides a simple and consistent                        │
+# │             a way to build, compile and run with a set of simple commands            │
+# │                                                                                      │
+# └──────────────────────────────────────────────────────────────────────────────────────┘
+#
+# usage:
+#   $ ./configure 0.1.0 OFF 8 
+
+
+echo "-----------------------------------------------------------------------"
+echo " BLOCK-0: init"
+echo "-----------------------------------------------------------------------"
+
+arg_1=${1:-"9.9.9"} # Версия 
+arg_2=${2:-"OFF"}   # Тесты
+arg_3=${3:-"8"}     # кол-во job
+
+var_use_version="${arg_1%.*}.$((${arg_1##*.}))";
+var_use_unit_test={$arg_2};
+var_use_thread=${arg_3};
+var_use_docker=${4:-"docker"} # чем собирать podman или docker
+
+
+# regexp для v1.0.2 -> 1.0.2
+echo "use_version  : "$var_use_version;
+echo "use_unit_test: "$var_use_unit_test;
+echo "use_thread   : "$var_use_thread;
+
+
+echo "-----------------------------------------------------------------------"
+echo " BLOCK-1: Checking / installing packages"
+echo "-----------------------------------------------------------------------"
+
+# чек директорий
+[ -d "./bin" ] && rm -R bin  || true
+[ -d "./build" ] && rm -R build  || true
+
+# !!! access for apt
+if [ "$EUID" -ne 0 ]; then
+    echo "!!!"
+    echo "!!!  apt failed: PLEASE RUN AS ROOT"
+    echo "!!!"
+    #exit
+
+else
+    # Настройка локали
+    # locale-gen "en_US.UTF-8"
+	echo	
+	apt-get update
+	apt-get install -y  libssl-dev libcpprest-dev libcurl4-openssl-dev
+fi
+
+#
+# DETECT WSL2
+#
+if [[ -n "$IS_WSL" || -n "$WSL_DISTRO_NAME" ]]; then
+	echo ""
+    echo "INFO: THIS IS WSL"
+
+    #if type systemctl >/dev/null 2>/dev/null; then
+        #dockerd&
+    #fi
+
+else
+	echo ""
+    echo -e "\nINFO: NATIVE LINUX\n"
+    echo ""
+fi
+
+echo "-----------------------------------------------------------------------"
+echo " BLOCK-2: Генерация обертки для CMake (Makefile)"
+echo "-----------------------------------------------------------------------"
+
+cat << EOT > ./Makefile
+
+# auto-generated: $(date)
+# line-ending: lf
+# indent: tab
+
+.PHONY: banner
+.DEFAULT_GOAL:= banner
+.SILENT: build
+
+
+define HEADER
+⡏⠉⠉⠉⠉⠉⠉⠋⠉⠉⠉⠉⠉⠉⠋⠉⠉⠉⠉⠉⠉⠉⠉⠉⠉⠙⠉⠉⠉⠹
+⡇⢸⣿⡟⠛⢿⣷⠀⢸⣿⡟⠛⢿⣷⡄⢸⣿⡇⠀⢸⣿⡇⢸⣿⡇⠀⢸⣿⡇⠀
+⡇⢸⣿⣧⣤⣾⠿⠀⢸⣿⣇⣀⣸⡿⠃⢸⣿⡇⠀⢸⣿⡇⢸⣿⣇⣀⣸⣿⡇⠀
+⡇⢸⣿⡏⠉⢹⣿⡆⢸⣿⡟⠛⢻⣷⡄⢸⣿⡇⠀⢸⣿⡇⢸⣿⡏⠉⢹⣿⡇⠀
+⡇⢸⣿⣧⣤⣼⡿⠃⢸⣿⡇⠀⢸⣿⡇⠸⣿⣧⣤⣼⡿⠁⢸⣿⡇⠀⢸⣿⡇⠀
+⣇⣀⣀⣀⣀⣀⣀⣄⣀⣀⣀⣀⣀⣀⣀⣠⣀⡈⠉⣁⣀⣄⣀⣀⣀⣠⣀⣀⣀⣰
+⣇⣿⠘⣿⣿⣿⡿⡿⣟⣟⢟⢟⢝⠵⡝⣿⡿⢂⣼⣿⣷⣌⠩⡫⡻⣝⠹⢿⣿⣷
+⡆⣿⣆⠱⣝⡵⣝⢅⠙⣿⢕⢕⢕⢕⢝⣥⢒⠅⣿⣿⣿⡿⣳⣌⠪⡪⣡⢑⢝⣇
+⡆⣿⣿⣦⠹⣳⣳⣕⢅⠈⢗⢕⢕⢕⢕⢕⢈⢆⠟⠋⠉⠁⠉⠉⠁⠈⠼⢐⢕⢽
+⡗⢰⣶⣶⣦⣝⢝⢕⢕⠅⡆⢕⢕⢕⢕⢕⣴⠏⣠⡶⠛⡉⡉⡛⢶⣦⡀⠐⣕⢕
+⡝⡄⢻⢟⣿⣿⣷⣕⣕⣅⣿⣔⣕⣵⣵⣿⣿⢠⣿⢠⣮⡈⣌⠨⠅⠹⣷⡀⢱⢕
+⡝⡵⠟⠈⢀⣀⣀⡀⠉⢿⣿⣿⣿⣿⣿⣿⣿⣼⣿⢈⡋⠴⢿⡟⣡⡇⣿⡇⡀⢕
+⡝⠁⣠⣾⠟⡉⡉⡉⠻⣦⣻⣿⣿⣿⣿⣿⣿⣿⣿⣧⠸⣿⣦⣥⣿⡇⡿⣰⢗⢄
+⠁⢰⣿⡏⣴⣌⠈⣌⠡⠈⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣬⣉⣉⣁⣄⢖⢕⢕⢕
+⡀⢻⣿⡇⢙⠁⠴⢿⡟⣡⡆⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣵⣵⣿
+⡻⣄⣻⣿⣌⠘⢿⣷⣥⣿⠇⣿⣿⣿⣿⣿⣿⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣷⢄⠻⣿⣟⠿⠦⠍⠉⣡⣾⣿⣿⣿⣿⣿⣿⢸⣿⣦⠙⣿⣿⣿⣿⣿⣿⣿⣿⠟
+⡕⡑⣑⣈⣻⢗⢟⢞⢝⣻⣿⣿⣿⣿⣿⣿⣿⠸⣿⠿⠃⣿⣿⣿⣿⣿⣿⡿⠁⣠
+⡝⡵⡈⢟⢕⢕⢕⢕⣵⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣿⣿⣿⣿⣿⠿⠋⣀⣈⠙
+⡝⡵⡕⡀⠑⠳⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⢉⡠⡲⡫⡪⡪⡣
+[cmake/wrapper]
+usage:
+  make 
+  make build
+  make run
+  make deb
+  make help
+    
+endef
+export HEADER
+export MAKEFLAGS=--no-print-directory
+
+build:init
+	cmake --build build -- -j ${var_use_thread}
+run:
+	cd ./bin && ./ota-backend
+	#cmake --build build --target run -- -j ${var_use_thread}
+test:build
+	cmake --build build --target test -- -j ${var_use_thread}
+deb:build
+	cmake --build build --target package -- -j ${var_use_thread}
+clean:
+	cmake --build build --target clean -- -j ${var_use_thread}
+
+#
+# LIBS: Сборка сторонних библиотек
+#
+dep:
+	cmake -S libs/cJSON/        -B libs/cJSON/build -DENABLE_CJSON_TEST=OFF -DBUILD_SHARED_AND_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=./build &&\
+	cmake -S libs/restbed/      -B libs/restbed/build -DBUILD_TESTS=NO -DBUILD_SSL=NO &&\
+	cmake -S libs/rabbitmq-c/   -B libs/rabbitmq-c/build -DBUILD_TESTS=NO &&\
+	cmake --build libs/rabbitmq-c/build -j ${var_use_thread} --target install &&\
+	cmake --build libs/cJSON/build      -j ${var_use_thread} --target install &&\
+	cmake --build libs/restbed/build    -j ${var_use_thread} --target install
+
+help:
+	@LC_ALL=C make -pRrq -f \$(lastword \$(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/(^|\n)# Files(\n|\$\$)/,/(^|\n)# Finished Make data base/ {if (\$\$1 !~ "^[#.]") {print "make ",\$\$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^\$@\$\$'
+
+#
+# INDOCK: сборка в докере
+#
+indock:
+	@echo action $(pwd) \$(filter-out \$@,\$(MAKECMDGOALS)) &&\
+	${var_use_docker} run -it --rm -w $(pwd) -v $(pwd):$(pwd) ${action:-"distro"} /bin/sh -c "./configure && make deb && exit"
+
+#
+# UPLOAD: загрузка на тестовую машину (bydefault: *.100)
+#
+upload:
+	@echo action $(pwd) \$(filter-out \$@,\$(MAKECMDGOALS)) &&\
+	scp ./bin/*.deb ${action:-"user@localhost"}:/home/user/
+#
+# GITSYNC: синхроним с удаленным repo
+#
+gitsync:
+	git submodule sync || true &&\
+	git submodule update --init --remote --recursive --progress || true
+
+gitlog:
+	echo "..."
+
+init:
+	cmake -S . -B build -D_VERSION_:STRING=${var_use_version} -DBUILD_TESTS:BOOL=OFF -DBUILD_TESTING:BOOL=${var_use_unit_test}
+
+banner:
+	@echo "\$\${HEADER}"
+
+# глушилка для передачи arg
+%:;     # thanks to chakrit
+#@:;    # thanks to William Purse
+EOT
+
+
+# _MAIN_
+make gitsync
+make dep
+make init
+make banner

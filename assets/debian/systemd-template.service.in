@@ -1,0 +1,13 @@
+[Unit]
+Description=@_SYSTEMD_DESCRIPTION@
+After=multi-user.target
+
+[Service]
+#RuntimeMaxSec=86400
+Type=simple
+Restart=always
+ExecStart=@_SYSTEMD_EXE_PATH@
+WorkingDirectory=@_SYSTEMD_WORK_DIR@
+
+[Install]
+WantedBy=multi-user.target

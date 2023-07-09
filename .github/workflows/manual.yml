@@ -1,0 +1,123 @@
+name: pio-simple-pipeline
+
+# You can use:
+#
+# | called a Literal Block Scalar which preserves new lines and trailing spaces
+# > called a Folded Block Scalar which converts new lines into spaces
+# plain old strings, either unquoted, single-quoted or double-quoted
+# Additionally, you can append a block chomping indicator, -, + or none. which 
+# will alter the newlines at the end of the block.
+# these are the block chomping definitions
+# - is called strip removes newlines at the end
+# + is called keep keeps all newlines at the end
+# default behavior is keeping a single newline at the end
+#
+# https://stackoverflow.com/questions/59954185/github-action-split-long-command-into-multiple-lines
+#
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    # Inputs the workflow accepts.
+    inputs:
+      name:
+        # Friendly description to be shown in the UI instead of 'name'
+        description: 'test exec'
+        # Default value if no value is explicitly provided
+        default: 'World'
+        # Input has to be provided for the workflow to run
+        required: true
+        # The data type of the input
+        type: string
+
+env:
+  BUILD_TYPE: Debug
+  
+jobs:
+
+  stage_1:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+  
+  # -------------------------------------------------
+    - name: check_action_run_1
+      run: |
+        FILE=./package.json
+        if test -f "$FILE"
+        then
+          echo "$FILE exists."
+        else
+          echo "File does not exist"
+        fi
+      shell: bash
+
+# -------------------------------------------------
+    - name: check_action_run_2
+      run: >-
+        for i in $(find . -type f -name "*.log");
+        do
+         echo "File: ${i} \n";
+         cat $i;
+         printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -;
+        done
+ # -------------------------------------------------     
+    - name: check_action_run_3
+      run: |
+        eval "$MULT_LINE_ENV01"
+        echo "$MULT_LINE_ENV02"
+      env:
+        MULT_LINE_ENV01: |
+          echo "$PWD"
+          ls
+          echo "command03"
+        MULT_LINE_ENV02: |
+          Line 01
+          Line 03
+          Line 02
+    
+  stage_2:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-last, ubuntu-22.04]
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive'
+    - uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cache/pip
+          ~/.platformio/.cache
+        key: ${{ runner.os }}-pio
+        
+    - name: setup_platformio_core
+      run: |
+      
+        curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -o get-platformio.py
+        python3 get-platformio.py
+        
+        export PATH=$PATH:/home/runner/.platformio/penv/bin
+        ls
+        pio run --environment az-delivery-devkit-v4
+        
+        #pip install --upgrade platformio
+        #pio run
+        
+      env:
+        MY_VAR_1: "one"
+        MY_VAR_2: "two"
+        MY_VAR_3: "three"
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: setup_platformio_core
+        path: ${{github.workspace}}/.pio/build/az-delivery-devkit-v4/firmware.elf
+        

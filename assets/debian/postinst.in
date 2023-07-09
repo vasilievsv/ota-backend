@@ -1,0 +1,90 @@
+#
+# Этот скрипт вызывает POST-REMOVE фазу
+#
+#   postrm is called during a dpkg --remove and 
+#   during dpkg --purge, and your folder will always be removed
+#
+
+if [ "@VERBOSE_LOGGING@" = "TRUE" ]; then
+    echo "Running post script for v@CMAKE_PROJECT_VERSION@"
+    set -o xtrace
+fi
+
+#
+# Шаблонизатор Cmake
+#
+
+var_service_unit_file=@_SYSTEMD_SERVICE_NAME@.service
+var_service_unit_name=@_SYSTEMD_SERVICE_NAME@
+
+var_service_file_copy_src=/usr/local/share/$var_service_unit_file
+var_service_file_copy_dst=/etc/systemd/system/$var_service_unit_file 
+
+###############################################################################
+#
+# DEB Action:  NEW_INSTALL / UPGRADE / DEFAULT
+#
+###############################################################################
+
+#
+# NEW_INSTALL
+#
+if [ "$1" = "configure" ] && [ "$2" = "" ]; then
+    #
+    # Если мы устанавливаем пакет в первый раз, копируем
+    # служебный файл в каталог служебного модуля.
+    #
+    echo "NEW_INSTALL"
+
+#
+# UPGRADE 
+#
+elif [ "$1" = "configure" ] && [ "$2" != "" ]; then
+    #
+    # Не трогаем служебный файл, если мы обновляем пакет.
+    # Очевидно, что эта логика должна быть изменена, если сервис
+    # файл менялся между релизами...
+    #
+    echo "UPGRADE"
+
+    # на будущее ( сделать что-то для версии )
+    if dpkg --compare-versions "$2" lt-nl "0.5.0"; then
+        echo "---"
+    fi
+#
+# ETC 
+#
+elif [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-remove" ] || [ "$1" = "abort-deconfigure" ]; then
+    echo "Not doing anything"
+else
+    echo "postinst called with unknown argument"
+    exit 1
+fi
+
+###############################################################################
+#
+# MAIN ACTION
+#
+###############################################################################
+
+# Проверка наличие systemctl
+if type systemctl >/dev/null 2>/dev/null; then
+
+    cp  $var_service_file_copy_src  $var_service_file_copy_dst
+    chmod 644 $var_service_file_copy_dst
+
+	if [ "@_SYSTEMD_AUTO_ENABLE@" = "ON" ]; then
+        systemctl  enable $var_service_unit_name || true
+	fi
+
+	if [ -z "$D" ]; then
+		systemctl daemon-reload || true
+
+		if [ "@_SYSTEMD_AUTO_ENABLE@" = "ON" ]; then
+			systemctl --no-block restart $var_service_unit_name || true
+		fi
+        
+        # Test if a systemd unit is active in a bash script
+        systemctl is-active --quiet @_SYSTEMD_SERVICE_NAME@ >/dev/null 2>&1 && echo "SERVICE @_SYSTEMD_SERVICE_NAME@ RUNNING YES" || echo "SERVICE @_SYSTEMD_SERVICE_NAME@ RUNNING NO"
+	fi
+fi
