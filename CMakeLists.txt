@@ -17,8 +17,8 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 project(ota-backend 
     LANGUAGES       CXX
-    DESCRIPTION     ""
-    HOMEPAGE_URL    ""
+    DESCRIPTION     "Over The Air by Backend"
+    HOMEPAGE_URL    "https://github.com/vasilievsv/ota-backend"
     VERSION         ${_VERSION_})
 
 # Флаги компилятора
