@@ -31,7 +31,7 @@ set(BUILD_SHARED_AND_STATIC_LIBS,ON)
 
 # Настройка глобальны инклудов
 #
-#set(CMAKE_CXX_FLAGS             "${CMAKE_CXX_FLAGS} -idirafter /usr/include")
+set(CMAKE_CXX_FLAGS             "${CMAKE_CXX_FLAGS} -idirafter /usr/include")
 #unset(CMAKE_C_IMPLICIT_INCLUDE_DIRECTORIES)
 #unset(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES)
 
@@ -95,7 +95,7 @@ add_library( _this_ota_backend_utils STATIC ${FILES_LIBS})
 #
 target_link_libraries(_this_ota_backend_utils 
                         LINK_PRIVATE 
-                            rabbitmq  cjson pthread cpprest crypto ssl )
+                            rabbitmq  cjson pthread crypto ssl )
 #
 # Настройка инклудов для сборки _this_project_common
 # 
@@ -106,9 +106,9 @@ target_link_libraries(_this_ota_backend_utils
 # SYSTEM PRIVATE:
 #
 target_include_directories( _this_ota_backend_utils
-                            #SYSTEM PRIVATE 
-                            #    /usr/include 
-                            #    "/usr/include/cpprest"
+                            SYSTEM PRIVATE 
+                                /usr/include 
+                                "/usr/include/cpprest"
                             PUBLIC 
                                 "src"
                                 "src/backend"
