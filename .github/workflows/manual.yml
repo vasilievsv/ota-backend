@@ -100,7 +100,8 @@ jobs:
     - name: job-configure
       run: |
         chmod +x ./configure 
-        ./configure 0.0.1 OFF 2
+        # !!! Github: Administrative privileges
+        sudo ./configure 0.0.1 OFF 2
       env:
         MY_VAR_1: "one"
         MY_VAR_2: "two"
