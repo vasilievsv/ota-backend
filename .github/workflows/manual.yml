@@ -85,39 +85,45 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-last, ubuntu-22.04]
+        os: [ubuntu-22.04]
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
-    - uses: actions/cache@v3
-      with:
-        path: |
-          ~/.cache/pip
-          ~/.platformio/.cache
-        key: ${{ runner.os }}-pio
+#    - uses: actions/cache@v3
+#      with:
+#        path: |
+#          ~/.cache/pip
+#          ~/.platformio/.cache
+#        key: ${{ runner.os }}-pio
         
-    - name: setup_platformio_core
+    - name: job-configure
       run: |
-      
-        curl -fsSL https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py -o get-platformio.py
-        python3 get-platformio.py
-        
-        export PATH=$PATH:/home/runner/.platformio/penv/bin
-        ls
-        pio run --environment az-delivery-devkit-v4
-        
-        #pip install --upgrade platformio
-        #pio run
-        
+        ./configure 0.0.1 OFF 2
       env:
         MY_VAR_1: "one"
         MY_VAR_2: "two"
         MY_VAR_3: "three"
 
-    - name: Upload artifacts
+    - name: job-build
+      run: |
+        make build
+      env:
+        MY_VAR_1: "one"
+        MY_VAR_2: "two"
+        MY_VAR_3: "three"
+
+    - name: job-build-deb
+      run: |
+          make deb
+      env:
+          MY_VAR_1: "one"
+          MY_VAR_2: "two"
+          MY_VAR_3: "three"
+
+    - name: job-upload-artifacts
       uses: actions/upload-artifact@v3
       with:
         name: setup_platformio_core
-        path: ${{github.workspace}}/.pio/build/az-delivery-devkit-v4/firmware.elf
+        path: ${{github.workspace}}/bin/*.deb
         
