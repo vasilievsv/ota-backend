@@ -9,28 +9,35 @@ on:
     # Inputs the workflow accepts.
     inputs:
       name:
-        # Friendly description to be shown in the UI instead of 'name'
         description: 'test exec'
-        # Default value if no value is explicitly provided
         default: 'World'
-        # Input has to be provided for the workflow to run
         required: true
-        # The data type of the input
         type: string
 
 env:
   BUILD_TYPE: Debug
   
 jobs:
+  stage_0:
+    runs-on: [self-hosted, linux, ARM64]
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: 'recursive' 
+    - name: check_action_run_0
+      run: |
+        #
+        #
+        #
+        date
 
   stage_1:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
       with:
-        submodules: 'recursive'
-  
-  # -------------------------------------------------
+        submodules: 'recursive'  
+# -------------------------------------------------
     - name: check_action_run_1
       run: |
         FILE=./package.json
@@ -41,7 +48,6 @@ jobs:
           echo "File does not exist"
         fi
       shell: bash
-
 # -------------------------------------------------
     - name: check_action_run_2
       run: >-
@@ -51,7 +57,7 @@ jobs:
          cat $i;
          printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -;
         done
- # -------------------------------------------------     
+# -------------------------------------------------     
     - name: check_action_run_3
       run: |
         eval "$MULT_LINE_ENV01"
@@ -65,7 +71,8 @@ jobs:
           Line 01
           Line 03
           Line 02
-    
+# -------------------------------------------------     
+      
   stage_2:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -96,7 +103,7 @@ jobs:
       run: |
         
         sudo make build
-        
+
       env:
         MY_VAR_1: "one"
         MY_VAR_2: "two"
