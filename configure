@@ -136,7 +136,7 @@ clean:
 #
 dep:
 	cmake -S libs/cJSON/        -B libs/cJSON/build -DENABLE_CJSON_TEST=OFF -DBUILD_SHARED_AND_STATIC_LIBS=ON -DCMAKE_INSTALL_PREFIX=./build &&\
-	cmake -S libs/restbed/      -B libs/restbed/build -DBUILD_TESTS=NO -DBUILD_SSL=NO &&\
+	cmake -S libs/restbed/      -B libs/restbed/build -DBUILD_TESTS=NO -DBUILD_SSL=YES &&\
 	cmake -S libs/rabbitmq-c/   -B libs/rabbitmq-c/build -DBUILD_TESTS=NO &&\
 	cmake --build libs/rabbitmq-c/build -j ${var_use_thread} --target install &&\
 	cmake --build libs/cJSON/build      -j ${var_use_thread} --target install &&\
