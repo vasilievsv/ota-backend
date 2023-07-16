@@ -1,19 +1,4 @@
-name: pio-simple-pipeline
-
-# You can use:
-#
-# | called a Literal Block Scalar which preserves new lines and trailing spaces
-# > called a Folded Block Scalar which converts new lines into spaces
-# plain old strings, either unquoted, single-quoted or double-quoted
-# Additionally, you can append a block chomping indicator, -, + or none. which 
-# will alter the newlines at the end of the block.
-# these are the block chomping definitions
-# - is called strip removes newlines at the end
-# + is called keep keeps all newlines at the end
-# default behavior is keeping a single newline at the end
-#
-# https://stackoverflow.com/questions/59954185/github-action-split-long-command-into-multiple-lines
-#
+name: example-pipeline
 
 on:
   push:
@@ -84,30 +69,24 @@ jobs:
   stage_2:
     runs-on: ${{ matrix.os }}
     strategy:
+      max-parallel: 2
       matrix:
+        version: [10, 12]
         os: [ubuntu-22.04]
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: 'recursive'
-#    - uses: actions/cache@v3
-#      with:
-#        path: |
-#          ~/.cache/pip
-#          ~/.platformio/.cache
-#        key: ${{ runner.os }}-pio
-        
     - name: job-configure
       run: |
         # check ssl
         sudo dpkg -l | grep ssl
 
-        chmod +x ./configure 
         # try fix wrong include
         rm -r ./libs/restbed/dependency/openssl/include/openssl
 
-        # !!! Github: Administrative privileges
         sudo ./configure 0.0.1 OFF 2
+
       env:
         MY_VAR_1: "one"
         MY_VAR_2: "two"
@@ -115,7 +94,9 @@ jobs:
 
     - name: job-build
       run: |
+        
         sudo make build
+        
       env:
         MY_VAR_1: "one"
         MY_VAR_2: "two"
