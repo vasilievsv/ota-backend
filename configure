@@ -140,7 +140,6 @@ dep:
 	cmake -S libs/rabbitmq-c/   -B libs/rabbitmq-c/build -DBUILD_TESTS=NO &&\
 	cmake --build libs/rabbitmq-c/build -j ${var_use_thread} --target install &&\
 	cmake --build libs/cJSON/build      -j ${var_use_thread} --target install &&\
-	cd ./libs/restbed/dependency/openssl && ./config && make -j 4 &&\
 	cmake --build libs/restbed/build    -j ${var_use_thread} --target install
 
 help:
@@ -185,6 +184,10 @@ EOT
 
 # _MAIN_
 make gitsync
+# quick fix openssl build
+cwd=$(pwd)
+cd ./libs/restbed/dependency/openssl && ./config && make -j 4
+cd $cwd
 make dep
 make init
 make banner
