@@ -20,6 +20,11 @@ void signalHandler(int signum)
     exit(signum);
 }
 
+void get_method_handler( const shared_ptr< Session > session )
+{
+    session->close( OK, "Goodbuy, World!", { { "Content-Length", "13" }, { "Connection", "close" } } );
+}
+
 
 int main( const int, const char** )
 {
