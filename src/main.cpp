@@ -33,6 +33,7 @@ int main( const int, const char** )
     auto resource2 = make_shared< Resource >( );
     auto resource3 = make_shared< Resource >( );
     auto resource4 = make_shared< Resource >( );
+    auto resource5 = make_shared< Resource >( );
 
     auto resource_ws = make_shared< Resource >( );
 
@@ -63,7 +64,19 @@ int main( const int, const char** )
 // WebSocket
     resource_ws->set_path( "/socket/bus" );
     resource_ws->set_method_handler( "GET", ws_get_method_handler );
+
+// HTTPS
+    resource5->set_path ( "/resource" );
+    resource5->set_method_handler ( "GET" , get_method_handler  );
+    resource5->set_method_handler ( "OPTIONS" , post_method_handler );
     
+    auto ssl_settings = make_shared< SSLSettings >( );
+    ssl_settings->set_http_disabled( true );
+    ssl_settings->set_tlsv11_enabled( true );
+    ssl_settings->set_private_key( Uri( "file:///tmp/server.key" ) );
+    ssl_settings->set_certificate( Uri( "file:///tmp/server.crt" ) );
+    ssl_settings->set_temporary_diffie_hellman( Uri( "file:///tmp/dh2048.pem" ) );
+
 //
 // Publish 
 //
@@ -76,7 +89,9 @@ int main( const int, const char** )
         service.publish( resource4 );
         service.publish( resource_ws );
         
-        settings->set_port( 8080 );
+        //settings->set_port( 8080 );
+        settings->set_ssl_settings(ssl_settings );
+
         service.schedule( ws_ping_handler, chrono::milliseconds( 3000 ) );
         service.start( settings );
     });
