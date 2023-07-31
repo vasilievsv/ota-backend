@@ -87,7 +87,7 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        version: [10, 12]
+        version: [10]
         os: [ubuntu-22.04]
     steps:
     - uses: actions/checkout@v3
@@ -95,12 +95,6 @@ jobs:
         submodules: 'recursive'
     - name: job-configure
       run: |
-        # check ssl
-        sudo dpkg -l | grep ssl
-
-        # try fix wrong include
-        rm -r ./libs/restbed/dependency/openssl/include/openssl
-
         sudo ./configure 0.0.1 OFF 2
 
       env:

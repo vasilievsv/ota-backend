@@ -1,11 +1,7 @@
 /logs
 /obj
 /data
-dcoll
-nohup.out
-
 .vs
-
 httpd
 /.vscode
 /obj
@@ -22,5 +18,4 @@ nohup.out
 /Makefile
 /doc/*.bkp
 /doc/*.dtmp
-/.vs/vs2022_project/FileContentIndex/*.vsidx
-/.vs/vs2022_project/FileContentIndex/*.lock
+

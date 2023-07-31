@@ -166,7 +166,7 @@ gitsync:
 	git submodule sync || true &&\
 	git submodule update --init --remote --recursive --force || true &&\
 	cd ./libs/restbed &&\
-	git submodule update --progress --init --recursive --force &&\
+	git submodule update --progress --init --recursive --force
 
 gitlog:
 	echo "..."
