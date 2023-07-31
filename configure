@@ -140,6 +140,7 @@ dep:
 	cmake -S libs/rabbitmq-c/   -B libs/rabbitmq-c/build -DBUILD_TESTS=NO &&\
 	cmake --build libs/rabbitmq-c/build -j ${var_use_thread} --target install &&\
 	cmake --build libs/cJSON/build      -j ${var_use_thread} --target install &&\
+	cd ./libs/restbed/dependency/openssl && ./config && make -j 4 &&\
 	cmake --build libs/restbed/build    -j ${var_use_thread} --target install
 
 help:
@@ -163,13 +164,15 @@ upload:
 #
 gitsync:
 	git submodule sync || true &&\
-	git submodule update --init --remote --recursive --progress || true
+	git submodule update --init --remote --recursive --force || true &&\
+	cd ./libs/restbed &&\
+	git submodule update --progress --init --recursive --force &&\
 
 gitlog:
 	echo "..."
 
 init:
-	cmake -S . -B build -D_VERSION_:STRING=${var_use_version} -DBUILD_TESTS:BOOL=OFF -DBUILD_TESTING:BOOL=${var_use_unit_test} -DBUILD_SSL:BOOL=OFF
+	cmake -S . -B build -D_VERSION_:STRING=${var_use_version} -DBUILD_TESTS:BOOL=OFF -DBUILD_TESTING:BOOL=${var_use_unit_test} -DBUILD_SSL:BOOL=ON
 
 banner:
 	@echo "\$\${HEADER}"
