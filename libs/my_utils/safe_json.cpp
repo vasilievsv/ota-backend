@@ -83,7 +83,7 @@ cJSON * jsonGetObject( cJSON* root, const char* name)
     return cJSON_AddObjectToObject(root,name);
 }
 
-char * jsonGetString(cJSON* root, const char* name,  char* _default="")
+char * jsonGetString(cJSON* root, const char* name,  const char* _default="")
 {
     auto T = cJSON_GetObjectItemCaseSensitive(root,name);
     if( T )
