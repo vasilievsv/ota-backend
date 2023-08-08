@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM">
+      <Configuration>Release</Configuration>
+      <Platform>ARM</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x86">
+      <Configuration>Debug</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x86">
+      <Configuration>Release</Configuration>
+      <Platform>x86</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{95072c3b-33f3-4249-8756-ba801ad1f42f}</ProjectGuid>
+    <Keyword>Linux</Keyword>
+    <RootNamespace>ConsoleApplication1</RootNamespace>
+    <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
+    <ApplicationType>Linux</ApplicationType>
+    <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
+    <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
+    <LinuxProjectType>{D51BCBC9-82E9-4017-911E-C93873C4EA2B}</LinuxProjectType>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <IncludePath>/usr/local/include;$(RemoteDeployDir)/libs;$(RemoteDeployDir)/src/backend</IncludePath>
+    <LibraryPath>$(RemoteDeployDir)/libs; /usr/local/lib64;</LibraryPath>
+  </PropertyGroup>
+  <ItemGroup>
+    <ClCompile Include="libs\my_utils\safe_json.cpp" />
+    <ClCompile Include="src\backend\http_send_file.cpp" />
+    <ClCompile Include="src\backend\http_utils.cpp" />
+    <ClCompile Include="src\handler_get_codux_boot.cpp" />
+    <ClCompile Include="src\handler_get_codux_static.cpp" />
+    <ClCompile Include="src\handler_get_root.cpp" />
+    <ClCompile Include="src\handler_post_default.cpp" />
+    <ClCompile Include="src\http_websocket.cpp" />
+    <ClCompile Include="src\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="libs\my_utils\safe_delete.h" />
+    <ClInclude Include="libs\my_utils\safe_json.h" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\byte.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\common.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\context_placeholder.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\context_placeholder_base.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\context_value.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\http.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\logger.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\request.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\resource.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\response.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\rule.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\service.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\session.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\session_manager.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\settings.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\ssl_settings.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\status_code.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\string.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\uri.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\web_socket.hpp" />
+    <ClInclude Include="libs\restbed\corvusoft\restbed\web_socket_message.hpp" />
+    <ClInclude Include="src\backend\http_server.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CMakePacking.cmake" />
+    <None Include="configure" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="libs\libcjson.a" />
+    <Library Include="libs\librabbitmq.a" />
+    <Library Include="libs\librestbed.a" />
+  </ItemGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <ClCompile>
+      <CppLanguageStandard>c++14</CppLanguageStandard>
+    </ClCompile>
+    <Link>
+      <LibraryDependencies>restbed;cjson;</LibraryDependencies>
+      <AdditionalLibraryDirectories>$(RemoteDeployDir)/libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+</Project>
