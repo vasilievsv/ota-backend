@@ -22,6 +22,7 @@ void signalHandler(int signum)
 
 void get_method_handler( const shared_ptr< Session > session )
 {
+    cout <<"post "<< endl;
     session->close( OK, "Goodbuy, World!", { { "Content-Length", "13" }, { "Connection", "close" } } );
 }
 
@@ -43,12 +44,12 @@ int main( const int, const char** )
     auto resource_ws = make_shared< Resource >( );
 
 // ОТЛАДКА: CORS DISABLE
-    // settings->set_default_header( "Connection", "close" );
-    // settings->set_default_header( "Access-Control-Allow-Origin", "*");
+//     settings->set_default_header( "Connection", "close" );
+//     settings->set_default_header( "Access-Control-Allow-Origin", "*");
 // Разрешения запроса из приложения к внешним ip (нужен CORS)
-    settings->set_default_headers( { 
+    settings->set_default_headers( {
         { "Access-Control-Allow-Origin", "* "},
-        { "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"} 
+        { "Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"}
     });
 
 
@@ -58,6 +59,8 @@ int main( const int, const char** )
     resource3->set_path ( "/static/.*/.*" );
 
     resource1->set_method_handler ( "GET" , get_handler_root );
+    resource1->set_method_handler ( "POST" , get_method_handler );
+
     resource2->set_method_handler ( "GET" , get_handler_codux_boot );
     resource3->set_method_handler ( "GET" , get_handler_codux_static );
 
@@ -74,16 +77,21 @@ int main( const int, const char** )
     resource5->set_path ( "/resource" );
     resource5->set_method_handler ( "GET" , get_method_handler  );
     resource5->set_method_handler ( "OPTIONS" , post_method_handler );
-    
+
     auto ssl_settings = make_shared< SSLSettings >( );
-    ssl_settings->set_http_disabled( true );
+    ssl_settings->set_http_disabled( false );
+    ssl_settings->set_tlsv1_enabled( true );
     ssl_settings->set_tlsv11_enabled( true );
-    ssl_settings->set_private_key( Uri( "file:///tmp/server.key" ) );
-    ssl_settings->set_certificate( Uri( "file:///tmp/server.crt" ) );
+    ssl_settings->set_tlsv12_enabled( true );
+    ssl_settings->set_private_key( Uri( "file:///tmp/ca_key_example.pem" ) );
+    ssl_settings->set_certificate( Uri( "file:///tmp/ca_cert_example.pem" ) );
     ssl_settings->set_temporary_diffie_hellman( Uri( "file:///tmp/dh2048.pem" ) );
 
+    settings->set_ssl_settings(ssl_settings );
+    settings->set_connection_timeout(std::chrono::milliseconds(15000)); // high value
+    //settings->set_port( 8080 );
 //
-// Publish 
+// Publish
 //
     std::thread  _backend_thread([&]{
         Service service;
@@ -93,11 +101,8 @@ int main( const int, const char** )
         service.publish( resource3 );
         service.publish( resource4 );
         service.publish( resource_ws );
-        
-        //settings->set_port( 8080 );
-        settings->set_ssl_settings(ssl_settings );
 
-        service.schedule( ws_ping_handler, chrono::milliseconds( 3000 ) );
+        //service.schedule( ws_ping_handler, chrono::milliseconds( 3000 ) );
         service.start( settings );
     });
 

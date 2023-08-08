@@ -11,10 +11,17 @@ bool sendFile(string path,string type,const shared_ptr< Session > session )
         const multimap< string, string > headers
         {
             { "Content-Type", type },
-            { "Content-Length", to_string( body.length( ) ) }
+            { "Content-Length", to_string( body.length( ) ) },
+            { "Connection", "keep-alive" } 
         };
         
-        session->close( OK, body, headers );
+        session->yield( OK,body, headers,[&](const std::shared_ptr< Session > session) { 
+
+          //   session->yield( OK, {{ "Connection", "keep-alive" } });
+
+        });
+
+       
     }
     else
     {
